@@ -1,0 +1,328 @@
+package com.example.kunzhai.uitasknew;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.net.sip.SipAudioCall;
+import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.ButtonBarLayout;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import static android.R.attr.id;
+import static android.R.attr.password;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_new);
+
+        //点击图片
+        ImageView imageButton = (ImageView) findViewById(R.id.image_m);
+        imageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+                View layout = inflater.inflate(R.layout.dialog_layout, null);
+                final AlertDialog.Builder alerDialog = new AlertDialog.Builder(MainActivity.this);
+
+                //设置点击事件
+                TextView takePhotoButton = (TextView) layout.findViewById(R.id.tookPhoto);
+                TextView fromPhotosButton = (TextView) layout.findViewById(R.id.fromPhotos);
+                takePhotoButton.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "您选择了[拍摄]", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                fromPhotosButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "您选择了[从相册选择]", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alerDialog.setTitle("上传头像").setView(layout)
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "您选择了[取消]", Toast.LENGTH_SHORT).show();
+                    }
+                }).create();
+                alerDialog.show();
+            }
+        });
+
+        //切换学生、教职工
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup_m);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            String choice = "";
+            View mRootView = (View) findViewById(R.id.main_new);
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.button1_m)
+                    choice = "您选择了学生";
+                if(checkedId == R.id.button2_m)
+                    choice = "您选择了教职工";
+                Snackbar.make(mRootView, choice, Snackbar.LENGTH_SHORT)
+                        .setAction("确定", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(getApplicationContext(), "Snackbar的确定按钮被点击了", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setDuration(2000)
+                        .show();
+            }
+        });
+        //设置登陆按钮
+        Button login = (Button) findViewById(R.id.CommitButton1_m);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextInputLayout mStudentNumTextInput = (TextInputLayout) findViewById(R.id.studentNumTextInput);
+                TextInputLayout mPasswordTextInput = (TextInputLayout) findViewById(R.id.passwordTextInput);
+                String studentNumString = mStudentNumTextInput.getEditText().getText().toString();
+                String passwordString = mPasswordTextInput.getEditText().getText().toString();
+                if(TextUtils.isEmpty(studentNumString)) {
+                    mStudentNumTextInput.setErrorEnabled(true);
+                    mStudentNumTextInput.setError("学号不能为空");
+                    return;
+                } else {
+                    mStudentNumTextInput.setErrorEnabled(false);
+                }
+                if(TextUtils.isEmpty(passwordString)) {
+                    mPasswordTextInput.setErrorEnabled(true);
+                    mPasswordTextInput.setError("密码不能为空");
+                    return;
+                } else {
+                    mPasswordTextInput.setErrorEnabled(false);
+                }
+                String rightOrWrong = "";
+                if(studentNumString.equals("123456") && passwordString.equals("6666"))
+                    rightOrWrong = "登陆成功";
+                else
+                    rightOrWrong = "学号或密码错误";
+                View mRootView = (View) findViewById(R.id.main_new);
+                Snackbar.make(mRootView, rightOrWrong, Snackbar.LENGTH_SHORT)
+                        .setAction("确定", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ;
+                            }
+                        }).setDuration(2000).show();
+
+            }
+        });
+
+        //设置注册按钮
+        Button signup = (Button) findViewById(R.id.CommitButton2_m);
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup_m);
+                Button signUpButton = (Button) findViewById(radioGroup.getCheckedRadioButtonId());
+                String choosedString = signUpButton.getText().toString();
+                if(choosedString.equals("学生")) {
+                    View mRootView = (View) findViewById(R.id.main_new);
+                    Snackbar.make(mRootView, "学生注册功能尚未启用", Snackbar.LENGTH_SHORT)
+                            .setAction("确定", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    ;
+                                }
+                            }).setDuration(2000).show();
+                }
+                else if(choosedString.equals("教职工")) {
+                    Toast.makeText(getApplicationContext(), "教职工功能尚未启用",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    };
+}
+
+
+
+
+
+
+
+
+
+package com.example.kunzhai.uitasknew;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.net.sip.SipAudioCall;
+import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.ButtonBarLayout;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import static android.R.attr.id;
+import static android.R.attr.password;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_new);
+
+        //点击图片
+        ImageView imageButton = (ImageView) findViewById(R.id.image_m);
+        imageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+                View layout = inflater.inflate(R.layout.dialog_layout, null);
+                final AlertDialog.Builder alerDialog = new AlertDialog.Builder(MainActivity.this);
+
+                //设置点击事件
+                TextView takePhotoButton = (TextView) layout.findViewById(R.id.tookPhoto);
+                TextView fromPhotosButton = (TextView) layout.findViewById(R.id.fromPhotos);
+                takePhotoButton.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "您选择了[拍摄]", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                fromPhotosButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "您选择了[从相册选择]", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alerDialog.setTitle("上传头像").setView(layout)
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getApplicationContext(), "您选择了[取消]", Toast.LENGTH_SHORT).show();
+                    }
+                }).create();
+                alerDialog.show();
+            }
+        });
+
+        //切换学生、教职工
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup_m);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            String choice = "";
+            View mRootView = (View) findViewById(R.id.main_new);
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.button1_m)
+                    choice = "您选择了学生";
+                if(checkedId == R.id.button2_m)
+                    choice = "您选择了教职工";
+                Snackbar.make(mRootView, choice, Snackbar.LENGTH_SHORT)
+                        .setAction("确定", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(getApplicationContext(), "Snackbar的确定按钮被点击了", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setDuration(2000)
+                        .show();
+            }
+        });
+
+        //设置登陆按钮
+        Button login = (Button) findViewById(R.id.CommitButton1_m);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextInputLayout mStudentNumTextInput = (TextInputLayout) findViewById(R.id.studentNumTextInput);
+                TextInputLayout mPasswordTextInput = (TextInputLayout) findViewById(R.id.passwordTextInput);
+                String studentNumString = mStudentNumTextInput.getEditText().getText().toString();
+                String passwordString = mPasswordTextInput.getEditText().getText().toString();
+                if(TextUtils.isEmpty(studentNumString)) {
+                    mStudentNumTextInput.setErrorEnabled(true);
+                    mStudentNumTextInput.setError("学号不能为空");
+                    return;
+                } else {
+                    mStudentNumTextInput.setErrorEnabled(false);
+                }
+                if(TextUtils.isEmpty(passwordString)) {
+                    mPasswordTextInput.setErrorEnabled(true);
+                    mPasswordTextInput.setError("密码不能为空");
+                    return;
+                } else {
+                    mPasswordTextInput.setErrorEnabled(false);
+                }
+                String rightOrWrong = "";
+                if(studentNumString.equals("123456") && passwordString.equals("6666"))
+                    rightOrWrong = "登陆成功";
+                else
+                    rightOrWrong = "学号或密码错误";
+                View mRootView = (View) findViewById(R.id.main_new);
+                Snackbar.make(mRootView, rightOrWrong, Snackbar.LENGTH_SHORT)
+                        .setAction("确定", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ;
+                            }
+                        }).setDuration(2000).show();
+
+            }
+        });
+
+        //设置注册按钮
+        Button signup = (Button) findViewById(R.id.CommitButton2_m);
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup_m);
+                Button signUpButton = (Button) findViewById(radioGroup.getCheckedRadioButtonId());
+                String choosedString = signUpButton.getText().toString();
+                if(choosedString.equals("学生")) {
+                    View mRootView = (View) findViewById(R.id.main_new);
+                    Snackbar.make(mRootView, "学生注册功能尚未启用", Snackbar.LENGTH_SHORT)
+                            .setAction("确定", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    ;
+                                }
+                            }).setDuration(2000).show();
+                }
+                else if(choosedString.equals("教职工")) {
+                    Toast.makeText(getApplicationContext(), "教职工功能尚未启用",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    };
+}
