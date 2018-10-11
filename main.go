@@ -10,14 +10,13 @@ import (
 )
 
 type Selpg struct {
-	Begin int
-	End int
-	/* false for static line number */
-	PageType bool
-	Length int
-	Destination string
-	Infile string
-	data []string
+	Begin int //起始页
+	End int //结束页
+	PageType bool //是否为-f类型命令，是则为真
+	Length int //页长度
+	Destination string //打印机名称
+	Infile string//输入文件
+	data []string//储存文件数据的字符串
 }
 
 func process_args(args *Selpg){
@@ -30,22 +29,24 @@ func process_args(args *Selpg){
 	flag.Parse()
 
 	// 处理输入错误
-	/*开始结束页错误*/
+	
+	//开始结束页错误
 	
 	if args.Begin < 1 || args.Begin > (math.MaxInt32-1) {
 		os.Stderr.Write([]byte("Invalid start page\n"))
 		os.Exit(1)
 	}
+	//结束页错误
 	if args.End < 1 || args.End > (math.MaxInt32-1) || args.End < args.Begin {
 		os.Stderr.Write([]byte("Invalid end page\n"))
 		os.Exit(2)
 	}
-	/*同时存在-f和-l参数*/
+	//同时存在-f和-l参数
 	if args.PageType != false && args.Length != -1 {
 		fmt.Fprintln(os.Stderr, "Conflict flags -f and -l")
 		os.Exit(0)
 	}
-	/*设置行数默认值*/
+	//设置行数默认值
 	if args.PageType== false && args.Length <=0 {
 		fmt.Println("Use 72 lines per page as default.")
 		args.Length = 72
@@ -102,7 +103,7 @@ func  process_input(selpg *Selpg) {
 
 	scanner := bufio.NewScanner(in)
 	if ! selpg.PageType { 
-		
+		//-l类型
 		count := 0
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -138,7 +139,7 @@ func  process_input(selpg *Selpg) {
 	
 }
 
-// ----输出内容到stdout
+//输出内容到stdout
 func (selpg *Selpg) outputrouter() {
 
 
@@ -148,7 +149,7 @@ func (selpg *Selpg) outputrouter() {
 	}
 }
 
-// 连接到打印机
+// 输出到打印机
 
 
 func (selpg *Selpg) outprint() {
