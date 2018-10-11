@@ -1,0 +1,11 @@
+invalid value "a.txt" for flag -e: strconv.ParseInt: parsing "a.txt": invalid syntax
+  -d string
+    	print destionation
+  -e int
+    	the end page (default -1)
+  -f	type of print
+  -l int
+    	page length (default -1)
+  -s int
+    	the start page (default -1)
+exit status 2

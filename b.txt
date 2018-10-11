@@ -1,3 +1,4 @@
+Use 72 lines per page as default.
 1
 2
 3
