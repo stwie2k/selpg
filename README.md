@@ -1,6 +1,6 @@
 # 服务计算作业——用golang实现linux下命令selpg
 
-标签（空格分隔）： 服务计算 linux selpg golang
+
 
 ---
 ##内容简介
